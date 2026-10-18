@@ -1,0 +1,54 @@
+{
+  "codebase_version": "v2.1",
+  "robot_type": "franka",
+  "fps": 20,
+  "total_episodes": 1,
+  "total_frames": 24,
+  "features": {
+    "action": {
+      "dtype": "float32",
+      "shape": [
+        7
+      ]
+    },
+    "observation.state": {
+      "dtype": "float32",
+      "shape": [
+        8
+      ]
+    },
+    "observation.images.image": {
+      "dtype": "video",
+      "shape": [
+        32,
+        32,
+        3
+      ],
+      "names": [
+        "height",
+        "width",
+        "channel"
+      ],
+      "video_info": {
+        "video.fps": 20
+      }
+    },
+    "observation.images.wrist_image": {
+      "dtype": "video",
+      "shape": [
+        32,
+        32,
+        3
+      ],
+      "names": [
+        "height",
+        "width",
+        "channel"
+      ],
+      "video_info": {
+        "video.fps": 20
+      }
+    }
+  },
+  "data_kind": "synthetic_example"
+}

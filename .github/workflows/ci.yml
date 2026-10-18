@@ -1,0 +1,21 @@
+name: Verify project
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.lock
+      - run: python -m pip install --no-build-isolation --no-deps -e .
+      - run: python -m pytest -q
+      - run: python -m vla_data_preflight demo
+      - run: python scripts/build_site.py

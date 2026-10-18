@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vla-data-preflight"
+version = "0.1.0"
+description = "Independent CPU preflight for a pinned StarVLA LIBERO/OFT data contract"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26,<3", "PyYAML>=6,<7"]
+
+[project.scripts]
+vla-data-preflight = "vla_data_preflight.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["vla_data_preflight*"]

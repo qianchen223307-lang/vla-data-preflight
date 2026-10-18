@@ -1,0 +1,253 @@
+{
+  "slug": "vla-data-preflight",
+  "title": "VLA 数据与配置预检",
+  "tagline": "用真实数组发现接口错配",
+  "category": "研究工程工具",
+  "data_kind": "synthetic_demo",
+  "summary": "独立实现的 LIBERO/QwenOFT 预检：核对训练 YAML、LeRobot 元数据、modality 切片与 NPZ 样本，不启动大模型训练。",
+  "metrics": [
+    {
+      "label": "正常样例错误",
+      "value": 0
+    },
+    {
+      "label": "异常样例错误",
+      "value": 6
+    },
+    {
+      "label": "图像流",
+      "value": 2
+    },
+    {
+      "label": "合成样本",
+      "value": 24,
+      "unit": "帧"
+    }
+  ],
+  "charts": [
+    {
+      "title": "实际读取的合成动作数组",
+      "kind": "line",
+      "labels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "series": [
+        {
+          "name": "action[0]",
+          "values": [
+            0.0,
+            0.014237172901630402,
+            0.028184285387396812,
+            0.0415571890771389,
+            0.05408342555165291,
+            0.06550779193639755,
+            0.07559753954410553,
+            0.08414710313081741,
+            0.09098229557275772,
+            0.09596385806798935,
+            0.0989903137087822,
+            0.09999998658895493,
+            0.09897230565547943,
+            0.09592822194099426,
+            0.09092973917722702,
+            0.08407871425151825,
+            0.07551469653844833,
+            0.06541220098733902,
+            0.05397702381014824,
+            0.0414421521127224,
+            0.028062934055924416,
+            0.014112000353634357,
+            -0.00012644208618439734,
+            -0.014362332411110401
+          ]
+        },
+        {
+          "name": "action[1]",
+          "values": [
+            0.08414710313081741,
+            0.09098229557275772,
+            0.09596385806798935,
+            0.0989903137087822,
+            0.09999998658895493,
+            0.09897230565547943,
+            0.09592821449041367,
+            0.09092973917722702,
+            0.08407871425151825,
+            0.07551471143960953,
+            0.06541220098733902,
+            0.05397702381014824,
+            0.04144212603569031,
+            0.028062934055924416,
+            0.014112000353634357,
+            -0.00012644208618439734,
+            -0.014362332411110401,
+            -0.02830559015274048,
+            -0.04167216271162033,
+            -0.05418973043560982,
+            -0.06560327857732773,
+            -0.07568024843931198,
+            -0.08421535044908524,
+            -0.09103468805551529
+          ]
+        }
+      ],
+      "y_label": "合成动作值"
+    }
+  ],
+  "tables": [
+    {
+      "title": "预检输入",
+      "columns": [
+        "输入",
+        "核验内容"
+      ],
+      "rows": [
+        [
+          "train.yaml",
+          "框架、维数、路径、batch、warmup、学习率"
+        ],
+        [
+          "meta/info.json",
+          "feature形状、图像映射、fps"
+        ],
+        [
+          "meta/modality.json",
+          "切片范围/重叠/覆盖、相机原键、语言原键"
+        ],
+        [
+          "samples.npz",
+          "真实数组的T/shape/dtype/finite/语言"
+        ]
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "valid",
+      "label": "正常配置",
+      "summary": "全部为独立生成的测试输入，未加载模型。",
+      "metrics": [
+        {
+          "label": "错误数",
+          "value": 0
+        },
+        {
+          "label": "样本帧数",
+          "value": 24
+        }
+      ],
+      "charts": [],
+      "tables": [
+        {
+          "title": "检查诊断",
+          "columns": [
+            "检查",
+            "路径",
+            "说明",
+            "修复提示"
+          ],
+          "rows": []
+        }
+      ]
+    },
+    {
+      "id": "invalid",
+      "label": "六类故意错配",
+      "summary": "全部为独立生成的测试输入，未加载模型。",
+      "metrics": [
+        {
+          "label": "错误数",
+          "value": 6
+        },
+        {
+          "label": "样本帧数",
+          "value": 24
+        }
+      ],
+      "charts": [],
+      "tables": [
+        {
+          "title": "检查诊断",
+          "columns": [
+            "检查",
+            "路径",
+            "说明",
+            "修复提示"
+          ],
+          "rows": [
+            [
+              "CFG_WARMUP",
+              "trainer.num_warmup_steps",
+              "Warmup must be an integer in [0, max_train_steps).",
+              "Keep a nonempty post-warmup training interval."
+            ],
+            [
+              "MOD_OVERLAP",
+              "modality.action.y",
+              "Slice overlaps another selected coordinate.",
+              "Each vector coordinate must be represented once."
+            ],
+            [
+              "MOD_CAMERA",
+              "modality.video.wrist_image",
+              "Camera original_key does not resolve to an image/video feature.",
+              "Match observation.images.* keys in info.json exactly."
+            ],
+            [
+              "SAMPLE_FINITE",
+              "samples.action",
+              "Vector snapshot must be numeric and finite.",
+              "Inspect NaN/Inf and fix the source data or exporter."
+            ],
+            [
+              "SAMPLE_LENGTH",
+              "samples.observation.images.image",
+              "Snapshot arrays must have the same nonzero T.",
+              "Select the same sampled frames for all modalities."
+            ],
+            [
+              "SAMPLE_LANGUAGE",
+              "samples.lang",
+              "Language instructions must be nonempty strings.",
+              "Resolve task_index using the real task table during export."
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "method": [
+    "接口依据固定在 StarVLA 提交 0ed0aad2，检查逻辑为原创实现。",
+    "安全读取 YAML/JSON/NPZ，不执行数据注册脚本，不允许 pickle 数组。",
+    "输出结构化诊断和可审阅的 JSON/HTML 报告；退出码支持自动化检查。"
+  ],
+  "limitations": [
+    "Only the documented LIBERO/QwenOFT contract is supported.",
+    "NPZ is this tool's snapshot adapter, not a native LeRobot storage format.",
+    "No Parquet/MP4 decoding, registry execution, model loading, training, success-rate or energy measurement.",
+    "A finite sample snapshot does not establish full-dataset quality or sensor synchronization."
+  ]
+}

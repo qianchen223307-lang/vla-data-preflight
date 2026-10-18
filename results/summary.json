@@ -1,0 +1,20 @@
+{
+  "valid": {
+    "sample_frames": 24,
+    "image_streams": 2,
+    "action_dim": 7,
+    "state_dim": 8,
+    "errors": 0,
+    "warnings": 0,
+    "passed": true
+  },
+  "invalid": {
+    "sample_frames": 24,
+    "image_streams": 1,
+    "action_dim": 7,
+    "state_dim": 8,
+    "errors": 6,
+    "warnings": 0,
+    "passed": false
+  }
+}

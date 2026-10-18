@@ -1,0 +1,12 @@
+{
+  "data_kind": "software_verification",
+  "python": "3.12.14",
+  "dependencies": {"numpy": "2.2.6", "PyYAML": "6.0.2"},
+  "test_command": "python -m pytest -q --junitxml=results/test-results.xml",
+  "tests_passed": 18,
+  "tests_failed": 0,
+  "module_demo_exit_code": 0,
+  "valid_module_check_exit_code": 0,
+  "invalid_module_check_exit_code": 1,
+  "notes": "Actual-array synthetic NPZ snapshots plus native-style metadata. No full LeRobot decoding or model training."
+}
